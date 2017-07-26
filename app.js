@@ -3,20 +3,35 @@ var port = process.env.PORT || 3000
 var path = require('path')
 var serveStatic = require('serve-static')
 var bodyParser = require('body-parser')
+var cookieParser = require('cookie-parser')
+var session = require('express-session')
 var mongoose = require('mongoose')
+var MongoStore = require('connect-mongo')(session)
 // mongoose.Promise = require('bluebird')
 var Movie = require('./models/movie')
 var User = require('./models/user')
 var _ = require('underscore')
 var app = express()
+var dbUrl = 'mongodb://localhost:27017/movie'
 
-mongoose.connect('mongodb://localhost:27017/movie', {
+mongoose.connect(dbUrl, {
   useMongoClient: true
 })
 
 app.set('views', './views/pages/')
 app.set('view engine', 'pug')
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(cookieParser())
+app.use(session({
+  secret: 'movie',
+  saveUninitialized: true, // don't create session until something stored 
+  resave: true, //don't save session if unmodified
+  auto_reconnect: true,
+  store: new MongoStore({
+    url:dbUrl,
+    collection:'sessions'
+  })
+}))
 app.use(serveStatic(path.join(__dirname, 'public')))
 app.locals.moment = require('moment')
 app.listen(port)
@@ -24,50 +39,17 @@ mongoose.Promise = global.Promise
 
 console.log('started on port ' + port)
 
-//signup
-app.post('/user/signup', function (req, res) {
-  var _user = req.body.user
-  //req.param('user')
-  //var _userid = req.params.userid
-  // /user/signup/1111?userid=110
-  //var _userid = req.query.userid
-
-  User.find({ name: _user.name }, function (err, user) {
-    if (err) {
-      console.log(err)
-    }
-    if (user){
-      return res.redirect('/')
-    }else{
-      var user = new User(_user)
-      user.save(function (err, user) {
-        if (err) {
-          console.log(err)
-        }
-        res.redirect('/admin/userlist')
-      })
-    }
-  })
-
-
-})
-
-//userlist page
-app.get('/admin/userlist', function (req, res) {
-  User.fetch(function (err, users) {
-    if (err) {
-      console.log(err)
-    }
-
-    res.render('userlist', {
-      title: '用户列表页',
-      users: users
-    })
-  })
-})
-
 //index page
 app.get('/', function (req, res) {
+  console.log('user in session: ')
+  console.log(req.session.user)
+
+  var _user = req.session.user
+  if(_user){
+    // app.locals.user = _user
+    res.locals.user = _user
+  }
+
   Movie.fetch(function (err, movies) {
     if (err) {
       console.log(err)
@@ -105,6 +87,84 @@ app.get('/', function (req, res) {
   //     poster:'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5'
   //     }]
   // })
+})
+
+//signup
+app.post('/user/signup', function (req, res) {
+  var _user = req.body.user
+  //req.param('user')
+  //var _userid = req.params.userid
+  // /user/signup/1111?userid=110
+  //var _userid = req.query.userid
+
+  User.findOne({ name: _user.name }, function (err, user) {
+    if (err) {
+      console.log(err)
+    }
+    if (user) {
+      console.log('该用户已存在')
+      return res.redirect('/')
+    } else {
+      user = new User(_user)
+      user.save(function (err, user) {
+        if (err) {
+          console.log(err)
+        }
+        res.redirect('/admin/userlist')
+      })
+    }
+  })
+})
+
+//signin
+app.post('/user/signin', function (req, res) {
+  var _user = req.body.user
+  var name = _user.name
+  var password = _user.password
+
+  User.findOne({ name: name }, function (err, user) {
+    if (err) {
+      console.log(err)
+    }
+    if (!user) {
+      console.log('no such user')
+      return res.redirect('/')
+    }
+    user.comparePassword(password, function (err, isMatch) {
+      if (err) {
+        console.log(err)
+      }
+      if (isMatch) {
+        // console.log('Password is matched')
+        req.session.user = user
+        return res.redirect('/')
+      } else {
+        console.log('Password is not matched')
+        return res.redirect('/')
+      }
+    })
+  })
+})
+
+//logout
+app.get('/logout',function(req,res){
+  delete req.session.user
+  // delete app.locals.user
+  res.redirect('/')
+})
+
+//userlist page
+app.get('/admin/userlist', function (req, res) {
+  User.fetch(function (err, users) {
+    if (err) {
+      console.log(err)
+    }
+
+    res.render('userlist', {
+      title: '用户列表页',
+      users: users
+    })
+  })
 })
 
 //detail page

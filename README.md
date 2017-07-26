@@ -8,4 +8,4 @@
 /admin/movie    后台录入页       
 /admin/list     后台列表页   
 /movie/:id      电影详情页       
-nodejs/express  pug模板引擎 bootstrap   
+nodejs/express  pug模板引擎 bootstrap  mongoose 
