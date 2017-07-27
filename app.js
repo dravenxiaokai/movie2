@@ -16,7 +16,7 @@ mongoose.connect(dbUrl, {
   useMongoClient: true
 })
 
-app.set('views', './app/views/pages/')
+app.set('views', 'app/views/pages/')
 app.set('view engine', 'pug')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())
