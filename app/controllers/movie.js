@@ -1,4 +1,6 @@
 var Movie = require('../models/movie')
+var Category = require('../models/category')
+var mongoose = require('mongoose')
 var Comment = require('../models/comment')
 var _ = require('underscore')
 
@@ -7,16 +9,16 @@ exports.detail = function (req, res) {
     var id = req.params.id
     Movie.findById(id, function (err, movie) {
         Comment
-            .find({movie:id})
-            .populate('from','name')
-            .populate('reply.from reply.to','name')
-            .exec(function(err,comments){
+            .find({ movie: id })
+            .populate('from', 'name')
+            .populate('reply.from reply.to', 'name')
+            .exec(function (err, comments) {
                 res.render('detail', {
                     title: 'movie ' + movie.title,
                     movie: movie,
-                    comments:comments
+                    comments: comments
                 })
-        })
+            })
     })
 }
 
@@ -28,7 +30,7 @@ exports.save = function (req, res) {
     var movieObj = req.body.movie
     var _movie
 
-    if (id !== 'undefined' && mongoose.Types.ObjectId.isValid(id)) {
+    if (mongoose.Types.ObjectId.isValid(id)) {//id !== 'undefined' && 
         Movie.findById(id, function (err, movie) {
             if (err) {
                 console.log(err)
@@ -43,40 +45,32 @@ exports.save = function (req, res) {
             })
         })
     } else {
-        _movie = new Movie({
-            doctor: movieObj.doctor,
-            title: movieObj.title,
-            country: movieObj.country,
-            language: movieObj.language,
-            year: movieObj.year,
-            poster: movieObj.poster,
-            summary: movieObj.summary,
-            flash: movieObj.flash
-        })
+        _movie = new Movie(movieObj)
+
+        var categoryId = _movie.category
 
         _movie.save(function (err, movie) {
             if (err) {
                 console.log(err)
             }
-            res.redirect('/movie/' + movie._id)
+            Category.findById(categoryId, function (err, category) {
+                category.movies.push(movie._id)
+                category.save(function (err, category) {
+                    res.redirect('/movie/' + movie._id)
+                })
+            })
         })
     }
 }
 
-//admin page
+//admin new page
 exports.new = function (req, res) {
-    res.render('admin', {
-        title: '电影后台录入页',
-        movie: {
-            title: '',
-            doctor: '',
-            country: '',
-            year: '',
-            poster: '',
-            flash: '',
-            summary: '',
-            language: ''
-        }
+    Category.find({}, function (err, categories) {
+        res.render('admin', {
+            title: '电影后台录入页',
+            categories: categories,
+            movie: {}
+        })
     })
 }
 
@@ -99,11 +93,15 @@ exports.update = function (req, res) {
 
     if (id) {
         Movie.findById(id, function (err, movie) {
-            res.render('admin', {
-                title: 'movie 后台更新页',
-                movie: movie
+            Category.find({}, function (err, categories) {
+                res.render('admin', {
+                    title: 'movie 后台更新页',
+                    movie: movie,
+                    categories:categories
+                })
             })
         })
+
     }
 }
 
