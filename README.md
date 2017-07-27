@@ -7,5 +7,7 @@
 /   首页      
 /admin/movie    后台录入页       
 /admin/list     后台列表页   
-/movie/:id      电影详情页       
-nodejs/express  pug模板引擎 bootstrap  mongoose 
+/movie/:id      电影详情页   
+
+技术支持          
+nodejs/express  pug  bootstrap  mongodb/mongoose  grunt   bower   npm  express-session
