@@ -28,8 +28,8 @@ app.use(session({
   resave: true, //don't save session if unmodified
   auto_reconnect: true,
   store: new MongoStore({
-    url:dbUrl,
-    collection:'sessions'
+    url: dbUrl,
+    collection: 'sessions'
   })
 }))
 app.use(serveStatic(path.join(__dirname, 'public')))
@@ -39,16 +39,21 @@ mongoose.Promise = global.Promise
 
 console.log('started on port ' + port)
 
+//pre handle user
+app.use(function (req, res, next) {
+  var _user = req.session.user
+  if (_user) {
+    app.locals.user = _user
+
+    return next()
+  }
+  return next()
+})
+
 //index page
 app.get('/', function (req, res) {
   console.log('user in session: ')
   console.log(req.session.user)
-
-  var _user = req.session.user
-  if(_user){
-    // app.locals.user = _user
-    res.locals.user = _user
-  }
 
   Movie.fetch(function (err, movies) {
     if (err) {
@@ -147,9 +152,9 @@ app.post('/user/signin', function (req, res) {
 })
 
 //logout
-app.get('/logout',function(req,res){
+app.get('/logout', function (req, res) {
   delete req.session.user
-  // delete app.locals.user
+  delete app.locals.user
   res.redirect('/')
 })
 

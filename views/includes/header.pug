@@ -10,13 +10,13 @@
         if locals.user
             p.navbar-text.navbar-right
                 span 欢迎您，#{user.name}
-                span &nbsp;|&nbsp;
-                a.navbar-link(href="/logout") 登出
+                span &nbsp;！&nbsp;
+                a.navbar-link.btn.btn-default(href="/logout") 登出
         else
             p.navbar-text.navbar-right
-                a.navbar-link(href="#",data-toggle="modal",data-target="#signupModal") 注册
-                span &nbsp;|&nbsp;
-                a.navbar-link(href="#",data-toggle="modal",data-target="#signinModal") 登录
+                a.navbar-link.btn.btn-default(href="#",data-toggle="modal",data-target="#signupModal") 注册
+                span &nbsp;&nbsp;
+                a.navbar-link.btn.btn-default(href="#",data-toggle="modal",data-target="#signinModal") 登录
 #signupModal.modal.fade
     .modal-dialog
         .modal-content
