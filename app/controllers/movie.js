@@ -30,12 +30,11 @@ exports.save = function (req, res) {
     var movieObj = req.body.movie
     var _movie
 
-    if (mongoose.Types.ObjectId.isValid(id)) {//id !== 'undefined' && 
+    if (id && mongoose.Types.ObjectId.isValid(id)) {//id !== 'undefined' && 
         Movie.findById(id, function (err, movie) {
             if (err) {
                 console.log(err)
             }
-
             _movie = _.extend(movie, movieObj)
             _movie.save(function (err, movie) {
                 if (err) {
@@ -47,18 +46,33 @@ exports.save = function (req, res) {
     } else {
         _movie = new Movie(movieObj)
 
-        var categoryId = _movie.category
+        var categoryId = movieObj.category
+        var categoryName = movieObj.categoryName
 
+        console.log(movieObj)
         _movie.save(function (err, movie) {
             if (err) {
                 console.log(err)
             }
-            Category.findById(categoryId, function (err, category) {
-                category.movies.push(movie._id)
-                category.save(function (err, category) {
-                    res.redirect('/movie/' + movie._id)
+            if (categoryId) {
+                Category.findById(categoryId, function (err, category) {
+                    category.movies.push(movie._id)
+                    category.save(function (err, category) {
+                        res.redirect('/movie/' + movie._id)
+                    })
                 })
-            })
+            } else if (categoryName) {
+                var category = new Category({
+                    name: categoryName,
+                    movies: [movie._id]
+                })
+                category.save(function (err, category) {
+                    movie.category = category._id
+                    movie.save(function (err, movie) {
+                        res.redirect('/movie/' + movie._id)
+                    })
+                })
+            }
         })
     }
 }
@@ -97,7 +111,7 @@ exports.update = function (req, res) {
                 res.render('admin', {
                     title: 'movie 后台更新页',
                     movie: movie,
-                    categories:categories
+                    categories: categories
                 })
             })
         })
