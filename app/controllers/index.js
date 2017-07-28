@@ -41,15 +41,16 @@ exports.search = function (req, res) {
                     title: 'movie 结果列表页',
                     keyword: category.name,
                     currentPage: (page + 1),
-                    query:catId,
+                    query:'cat='+catId,
                     totalPage: Math.ceil(movies.length / count),
                     // category: category,
-                    movies: results
+                    movies: results,
+                    p:page
                 })
             })
     } else {
         Movie
-            .find({ title: new RegExp(q + '.*', 'i') })
+            .find({ title:  new RegExp(q + '.*', 'i')})
             .exec(function (err, movies) {
                 if (err) {
                     console.log(err)

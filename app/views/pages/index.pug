@@ -11,7 +11,7 @@ block content
                     .panel-body
                         if cat.movies && cat.movies.length>0
                             each item in cat.movies
-                                .col-md-2
+                                .col-md-2.col-sm-6.col-xs-12
                                     .thumbnail
                                         a(href="/movie/"+item._id)
                                             img(src=item.poster,alt=item.title,title=item.title)
