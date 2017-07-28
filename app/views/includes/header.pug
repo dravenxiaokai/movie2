@@ -1,19 +1,19 @@
-.container
+.container(style="margin-top:1em")
     .row
         .page-header.clearfix
-            h1= title
-            .col-md-4.col-sm-4.col-xs-12
-                small 重度科幻迷
-            .col-md-8.col-sm-8.col-xs-12
+            h2.text-capitalize(style="padding-top:0.5em")= title
+            .col-md-4
+                a(href="http://weibo.com/u/3826537889?topnav=1&wvr=6&topsug=1&is_all=1").btn: span @dravenxiaokai
+            .col-md-8
                 form(method="get",action="/results")
                     .input-group.col-xs-12.col-sm-6.pull-right
                         input.form-control(type="text",name="q",placeholder="电影名称",value="金刚狼")
                         span.input-group-btn
                             button.btn.btn-success(type="submit") 搜索
-.navbar.navbar-default.navbar-fixed-bottom
+.navbar.navbar-default.navbar-fixed-top
     .container
-        .navbar-header
-            a.navbar-brand(href="/") 重度科幻迷
+        .navbar-header.bg-info
+            a.navbar-brand(href="/",style="line-height:100%;margin:0.4em auto"): span.text-center.text-primary LOGO
         if locals.user
             p.navbar-text.navbar-right
                 span 欢迎您，#{user.name}
