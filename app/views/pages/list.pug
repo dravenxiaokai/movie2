@@ -11,6 +11,7 @@ block content
             th.text-center 国家
             th.text-center 上映年份
             th.text-center 录入时间
+            th.text-center pv
             th.text-center 查看
             th.text-center 更新
             th.text-center 删除
@@ -22,6 +23,7 @@ block content
               td #{item.country}
               td #{item.year}
               td #{moment(item.meta.updateAt).format('MM/DD/YYYY')}
+              td #{item.pv}
               td: a(target="_blank",href="/movie/"+item._id,class="btn btn-success btn-sm") 查看
               td: a(target="_blank",href="/admin/movie/update/"+item._id,class="btn btn-warning btn-sm") 修改
               td

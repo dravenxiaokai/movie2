@@ -6,15 +6,19 @@ block content
             each cat in categories
                 .panel.panel-default
                     .panel-heading
-                        h3
+                        h4
                             a(href="/results?cat="+cat._id+"&p=0") #{cat.name}
+                                span.caret
                     .panel-body
                         if cat.movies && cat.movies.length>0
                             each item in cat.movies
-                                .col-md-2.col-sm-6.col-xs-12
-                                    .thumbnail
+                                .col-lg-2.col-md-3.col-sm-6.col-xs-12
+                                    .thumbnail(title=item.title)
                                         a(href="/movie/"+item._id)
-                                            img(src=item.poster,alt=item.title,title=item.title)
+                                            if item.poster.indexOf('http') > -1
+                                                img(src=item.poster,width="",height="",alt=item.title,title=item.title)
+                                            else
+                                                img(src="/upload/"+item.poster,width="",height="",alt=item.title,title=item.title)
                                         .caption
-                                            h3 #{item.title}
-                                            p: a.btn.btn-primary(href="/movie/"+item._id,role="button") 观看预告片
+                                            h5.text-center.ellipsis #{item.title}
+                                            p.text-center: a.btn.btn-primary(href="/movie/"+item._id,role="button") 观看预告片

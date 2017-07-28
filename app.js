@@ -7,6 +7,7 @@ var cookieParser = require('cookie-parser')
 var session = require('express-session')
 var mongoose = require('mongoose')
 var MongoStore = require('connect-mongo')(session)
+var multipart = require('connect-multiparty')
 // mongoose.Promise = require('bluebird')
 
 var app = express()
@@ -20,6 +21,7 @@ app.set('views', 'app/views/pages/')
 app.set('view engine', 'pug')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())
+app.use(multipart())
 app.use(session({
   secret: 'movie',
   saveUninitialized: true, // don't create session until something stored 

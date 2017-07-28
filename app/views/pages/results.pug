@@ -9,12 +9,15 @@ block content
                 .panel-body
                     if movies && movies.length>0
                         each item in movies
-                            .col-md-2
+                            .col-lg-2.col-md-3.col-sm-6.col-xs-12
                                 .thumbnail
                                     a(href="/movie/"+item._id)
-                                        img(src=item.poster,alt=item.title,title=item.title)
+                                        if item.poster.indexOf('http') > -1
+                                            img(src=item.poster,alt=item.title,title=item.title)
+                                        else
+                                            img(src="/upload/"+item.poster,width="",height="",alt=item.title,title=item.title)
                                     .caption
-                                        h3 #{item.title}
+                                        h4.ellipsis #{item.title}
                                         p: a.btn.btn-primary(href="/movie/"+item._id,role="button") 观看预告片
             ul.pagination
                 - for (var i = 0; i < totalPage; i++) {

@@ -6,7 +6,13 @@ html
         include ./includes/head
         style.
             body {
-                padding-bottom:50px
+                padding-bottom:50px;
+            }
+            .ellipsis{
+                width:100%;
+                overflow:hidden;
+                text-overflow:ellipsis;
+                white-space:nowrap;
             }
     body
         include ./includes/header
