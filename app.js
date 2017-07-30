@@ -9,9 +9,14 @@ var mongoose = require('mongoose')
 var MongoStore = require('connect-mongo')(session)
 var multipart = require('connect-multiparty')
 // mongoose.Promise = require('bluebird')
-
 var app = express()
+
+var env = process.env.NODE_ENV || 'development'
 var dbUrl = 'mongodb://localhost:27017/movie'
+
+if (env === 'development') {
+  dbUrl = 'mongodb://localhost/movie'
+}
 
 mongoose.connect(dbUrl, {
   useMongoClient: true
@@ -33,11 +38,11 @@ app.use(session({
   })
 }))
 
-if('development' === app.get('env')){
-  app.set('showStackError',true)
+if ('development' === app.get('env')) {
+  app.set('showStackError', true)
   // app.use(express.logger(':method :url :status'))
   app.locals.pretty = true
-  mongoose.set('debug',true)
+  mongoose.set('debug', true)
 }
 
 require('./config/routes')(app)

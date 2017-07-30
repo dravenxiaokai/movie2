@@ -3,7 +3,7 @@
   "apps" : [{
     "name"      : "movie2",
     // "script"    : "app.js",
-    "script"    : "./app.js",
+    "script"    : "app.js",
     "env": {
       "COMMON_VARIABLE": "true"
     },
