@@ -40,3 +40,24 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+
+pids
+logs
+public/build
+public/build/*
+results
+
+npm-debug.log
+node_modules
+*.graffle
+bower_components
+.DS_Store
