@@ -69,6 +69,7 @@ exports.save = function (req, res) {
             if (err) {
                 console.log(err)
             }
+            //新的对象的字段替换老的对象的字段
             _movie = _.extend(movie, movieObj)
             _movie.save(function (err, movie) {
                 if (err) {
